@@ -1,0 +1,213 @@
+import type { Route } from "./+types/home";
+import { useEffect, useMemo, useState } from "react";
+
+import { ReadingSummary } from "~/components/tarot/reading-summary";
+import { RevealStep } from "~/components/tarot/reveal-step";
+import { SetupForm } from "~/components/tarot/setup-form";
+import { useTarotSession } from "~/hooks/use-tarot-session";
+import { getCardBackPath } from "~/lib/tarot/content";
+import { SPREADS } from "~/lib/tarot/spreads";
+import type { DeckScope, SpreadType, TarotFocus } from "~/lib/tarot/types";
+
+export function meta({}: Route.MetaArgs) {
+  const title = "BullTarot";
+  const description =
+    "Discover playful bull terrier tarot readings with dog-themed card meanings for love, career, and life-upright, reversed, and full of zoomies.";
+  const image = "https://bulltarot.com/cards/og.webp";
+
+  return [
+    { title },
+    {
+      name: "description",
+      content: description,
+    },
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: title },
+    { property: "og:locale", content: "en_US" },
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+    { property: "og:url", content: "/" },
+    { property: "og:image", content: image },
+    { property: "og:image:alt", content: "BullTarot card back artwork" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: title },
+    { name: "twitter:description", content: description },
+    { name: "twitter:image", content: image },
+    { name: "twitter:image:alt", content: "BullTarot card back artwork" },
+  ];
+}
+
+export default function Home() {
+  const [hasBegun, setHasBegun] = useState(false);
+  const [spread, setSpread] = useState<SpreadType>("single");
+  const [focus, setFocus] = useState<TarotFocus>("general");
+  const [deckScope, setDeckScope] = useState<DeckScope>("all_cards");
+  const [revealedCards, setRevealedCards] = useState<boolean[]>([]);
+  const session = useTarotSession();
+
+  useEffect(() => {
+    if (session.phase === "reveal") {
+      setRevealedCards((previous) => {
+        if (previous.length === session.cards.length) {
+          return previous;
+        }
+
+        if (session.dailyPullRedeemed) {
+          return new Array(session.cards.length).fill(true);
+        }
+
+        return new Array(session.cards.length).fill(false);
+      });
+      return;
+    }
+
+    setRevealedCards([]);
+  }, [session.cards.length, session.dailyPullRedeemed, session.phase]);
+
+  const allRevealed = useMemo(
+    () => revealedCards.length > 0 && revealedCards.every(Boolean),
+    [revealedCards],
+  );
+
+  const revealCard = (index: number): void => {
+    setRevealedCards((previous) => {
+      if (previous[index]) {
+        return previous;
+      }
+
+      const next = [...previous];
+      next[index] = true;
+      return next;
+    });
+  };
+
+  const revealAll = (): void => {
+    setRevealedCards(new Array(session.cards.length).fill(true));
+  };
+
+  if (!hasBegun) {
+    return (
+      <main className="tarot-shell bg-night">
+        <div className="tarot-wrap">
+          <header className="tarot-header">
+            <span className="tarot-kicker">
+              Mystical spread readings by dogs
+            </span>
+            <h1 className="tarot-title">BullTarot</h1>
+            <p className="tarot-subtitle">
+              Center your question, choose a spread, and let the cards fall as
+              they may.
+            </p>
+          </header>
+
+          <div className="tarot-hero-card-wrap" aria-hidden="true">
+            <img
+              className="tarot-hero-card"
+              src={getCardBackPath()}
+              alt=""
+              loading="eager"
+            />
+          </div>
+
+          <button
+            type="button"
+            className="tarot-button"
+            onClick={() => setHasBegun(true)}
+          >
+            Begin
+          </button>
+        </div>
+      </main>
+    );
+  }
+
+  if (session.phase === "setup") {
+    return (
+      <main className="tarot-shell bg-night">
+        <div className="tarot-wrap">
+          <header className="tarot-header">
+            <span className="tarot-kicker">
+              Mystical spread readings by dogs
+            </span>
+            <h1 className="tarot-title">BullTarot</h1>
+            <p className="tarot-subtitle">
+              Choose your spread and draw with intention.
+            </p>
+          </header>
+          {session.setupError ? (
+            <p role="alert" aria-live="polite" className="tarot-alert">
+              {session.setupError}
+            </p>
+          ) : null}
+          <SetupForm
+            spread={spread}
+            focus={focus}
+            deckScope={deckScope}
+            onSpreadChange={setSpread}
+            onFocusChange={setFocus}
+            onDeckScopeChange={setDeckScope}
+            onSubmit={() => session.startSession({ spread, focus, deckScope })}
+          />
+          <footer className="tarot-footer">
+            For reflection and entertainment. Trust your intuition above all.
+            Made with ❤️ by{" "}
+            <a href="https://fdrc.sh" className="tarot-footer-link">
+              Fede
+            </a>
+            .
+          </footer>
+        </div>
+      </main>
+    );
+  }
+
+  if (session.phase === "reveal" && session.cards.length > 0) {
+    return (
+      <main className="tarot-shell bg-night">
+        <div className="tarot-wrap">
+          <header className="tarot-header">
+            <h1 className="tarot-title">BullTarot</h1>
+            <p className="tarot-subtitle">{SPREADS[spread].label}</p>
+            {session.dailyPullRedeemed ? (
+              <p className="tarot-kicker">
+                Your faith has already been rewarded today. This card is your
+                saved pull.
+              </p>
+            ) : null}
+          </header>
+          <RevealStep
+            title="Tap each card to unveil it."
+            cards={session.cards}
+            revealedCards={revealedCards}
+            onRevealCard={revealCard}
+            onRevealAll={revealAll}
+            allRevealed={allRevealed}
+            onFinish={session.finishReading}
+            onRestart={session.restart}
+          />
+          {spread === "single" ? (
+            <footer className="tarot-footer">
+              Bookmark your{" "}
+              <a href="/daily" className="tarot-footer-link underline">
+                daily pull
+              </a>{" "}
+              and return to it whenever you need guidance.
+            </footer>
+          ) : null}
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="tarot-shell bg-night">
+      <div className="tarot-wrap">
+        <header className="tarot-header">
+          <h1 className="tarot-title">BullTarot</h1>
+          <p className="tarot-subtitle">Your reading is complete.</p>
+        </header>
+        <ReadingSummary cards={session.cards} onRestart={session.restart} />
+      </div>
+    </main>
+  );
+}

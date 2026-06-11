@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#171124" />
+    <title>404 | BullTarot</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        padding: 2rem 1rem;
+        color: #f5f2ea;
+        background-color: #1a1428;
+        background-image:
+          radial-gradient(
+            ellipse 80% 50% at 50% -10%,
+            rgb(111 53 167 / 42%),
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 60% 40% at 85% 110%,
+            rgb(59 48 116 / 40%),
+            transparent 60%
+          ),
+          radial-gradient(
+            1px 1px at 20% 30%,
+            rgb(255 232 176 / 60%),
+            transparent
+          ),
+          radial-gradient(
+            1px 1px at 70% 20%,
+            rgb(255 232 176 / 50%),
+            transparent
+          ),
+          radial-gradient(
+            1.5px 1.5px at 40% 70%,
+            rgb(255 232 176 / 40%),
+            transparent
+          ),
+          radial-gradient(
+            1px 1px at 90% 60%,
+            rgb(255 232 176 / 35%),
+            transparent
+          ),
+          linear-gradient(165deg, #171124 0%, #1f1630 48%, #100c1c 100%);
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      }
+
+      .wrap {
+        width: min(100%, 42rem);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.35rem;
+        text-align: center;
+      }
+
+      .kicker {
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.36em;
+        font-size: 0.72rem;
+        color: #c9ab6b;
+      }
+
+      h1 {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2.2rem, 8vw, 4rem);
+        color: #f0cb7d;
+        text-shadow: 0 0 18px rgb(240 203 125 / 45%);
+      }
+
+      p {
+        margin: 0;
+        color: rgb(236 224 195 / 82%);
+      }
+
+      .card-wrap {
+        position: relative;
+        width: min(60vw, 14rem);
+        aspect-ratio: 2 / 3;
+        filter: drop-shadow(0 16px 30px rgb(8 5 18 / 45%));
+      }
+
+      .card-wrap::before {
+        content: "";
+        position: absolute;
+        inset: -0.75rem;
+        border-radius: 1rem;
+        background: radial-gradient(
+          circle,
+          rgb(240 203 125 / 42%) 0%,
+          rgb(240 203 125 / 0%) 66%
+        );
+        animation: pulse 3.2s ease-in-out infinite;
+      }
+
+      .card {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 0.8rem;
+        border: 1px solid rgb(240 203 125 / 38%);
+        box-shadow:
+          0 0 0 1px rgb(240 203 125 / 26%),
+          0 0 30px rgb(240 203 125 / 36%);
+        animation: float 4.8s ease-in-out infinite;
+      }
+
+      .home-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgb(245 232 200 / 45%);
+        border-radius: 0.625rem;
+        padding: 0.625rem 1rem;
+        color: #fcf8ee;
+        text-decoration: none;
+        font-weight: 600;
+        background: linear-gradient(180deg, #8f5f22 0%, #6c4417 100%);
+      }
+
+      .home-link:hover {
+        filter: brightness(1.1);
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0) rotate(-1deg);
+        }
+
+        50% {
+          transform: translateY(-12px) rotate(1deg);
+        }
+
+        100% {
+          transform: translateY(0) rotate(-1deg);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 0.45;
+          transform: scale(0.95);
+        }
+
+        50% {
+          opacity: 0.82;
+          transform: scale(1.03);
+        }
+
+        100% {
+          opacity: 0.45;
+          transform: scale(0.95);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .card-wrap::before,
+        .card {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <p class="kicker">The cards are silent</p>
+      <h1>404</h1>
+      <p>The path you sought is not in this spread.</p>
+      <div class="card-wrap" aria-hidden="true">
+        <img class="card" src="./cards/404.webp" alt="" />
+      </div>
+      <a class="home-link" href="./">Return Home</a>
+    </main>
+  </body>
+</html>
