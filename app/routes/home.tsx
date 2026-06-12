@@ -5,6 +5,7 @@ import { ReadingSummary } from "~/components/tarot/reading-summary";
 import { RevealStep } from "~/components/tarot/reveal-step";
 import { SetupForm } from "~/components/tarot/setup-form";
 import { useTarotSession } from "~/hooks/use-tarot-session";
+import { trackEvent } from "~/lib/analytics";
 import { getCardBackPath } from "~/lib/tarot/content";
 import { SPREADS } from "~/lib/tarot/spreads";
 import type { DeckScope, SpreadType, TarotFocus } from "~/lib/tarot/types";
@@ -77,11 +78,29 @@ export default function Home() {
 
       const next = [...previous];
       next[index] = true;
+
+      const revealedCount = next.filter(Boolean).length;
+      trackEvent("tarot_card_revealed", {
+        spread,
+        focus,
+        deck_scope: deckScope,
+        card_index: index + 1,
+        revealed_count: revealedCount,
+        total_cards: session.cards.length,
+        all_revealed: revealedCount === session.cards.length,
+      });
+
       return next;
     });
   };
 
   const revealAll = (): void => {
+    trackEvent("tarot_reveal_all", {
+      spread,
+      focus,
+      deck_scope: deckScope,
+      total_cards: session.cards.length,
+    });
     setRevealedCards(new Array(session.cards.length).fill(true));
   };
 
@@ -112,7 +131,12 @@ export default function Home() {
           <button
             type="button"
             className="tarot-button"
-            onClick={() => setHasBegun(true)}
+            onClick={() => {
+              trackEvent("tarot_begin_clicked", {
+                entrypoint: "home",
+              });
+              setHasBegun(true);
+            }}
           >
             Begin
           </button>
@@ -143,10 +167,35 @@ export default function Home() {
             spread={spread}
             focus={focus}
             deckScope={deckScope}
-            onSpreadChange={setSpread}
-            onFocusChange={setFocus}
-            onDeckScopeChange={setDeckScope}
-            onSubmit={() => session.startSession({ spread, focus, deckScope })}
+            onSpreadChange={(nextSpread) => {
+              trackEvent("tarot_option_changed", {
+                option: "spread",
+                value: nextSpread,
+              });
+              setSpread(nextSpread);
+            }}
+            onFocusChange={(nextFocus) => {
+              trackEvent("tarot_option_changed", {
+                option: "focus",
+                value: nextFocus,
+              });
+              setFocus(nextFocus);
+            }}
+            onDeckScopeChange={(nextDeckScope) => {
+              trackEvent("tarot_option_changed", {
+                option: "deck_scope",
+                value: nextDeckScope,
+              });
+              setDeckScope(nextDeckScope);
+            }}
+            onSubmit={() => {
+              trackEvent("tarot_shuffle_draw", {
+                spread,
+                focus,
+                deck_scope: deckScope,
+              });
+              session.startSession({ spread, focus, deckScope });
+            }}
           />
           <footer className="tarot-footer">
             For reflection and entertainment. Trust your intuition above all.
@@ -182,8 +231,28 @@ export default function Home() {
             onRevealCard={revealCard}
             onRevealAll={revealAll}
             allRevealed={allRevealed}
-            onFinish={session.finishReading}
-            onRestart={session.restart}
+            onFinish={() => {
+              trackEvent("tarot_finish_reading", {
+                spread,
+                focus,
+                deck_scope: deckScope,
+                all_cards_revealed: allRevealed,
+                revealed_cards: revealedCards.filter(Boolean).length,
+                total_cards: session.cards.length,
+              });
+              session.finishReading();
+            }}
+            onRestart={() => {
+              trackEvent("tarot_new_reading_from_reveal", {
+                spread,
+                focus,
+                deck_scope: deckScope,
+                all_cards_revealed: allRevealed,
+                revealed_cards: revealedCards.filter(Boolean).length,
+                total_cards: session.cards.length,
+              });
+              session.restart();
+            }}
           />
           {spread === "single" ? (
             <footer className="tarot-footer">
