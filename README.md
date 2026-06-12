@@ -1,6 +1,8 @@
 # BullTarot
 
-BullTarot is a React Router web app for guided tarot readings.
+[<img src="https://bulltarot.com/cards/0.webp">](https://bulltarot.com/)
+
+[BullTarot.com](https://bulltarot.com) is a React Router web app for guided tarot readings.
 
 It lets you choose a spread, focus area, and deck scope, then reveal cards one by one (or all at once) and finish with a full reading summary.
 
