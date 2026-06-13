@@ -19,9 +19,9 @@ describe("tarot content", () => {
   });
 
   it("builds shareable image paths for upright and reversed cards", () => {
-    expect(getShareableImagePath(12, "upright")).toBe("/shareables/12.png");
+    expect(getShareableImagePath(12, "upright")).toBe("/shareables/12.webp");
     expect(getShareableImagePath(12, "reversed")).toBe(
-      "/shareables/12-reversed.png",
+      "/shareables/12-reversed.webp",
     );
   });
 

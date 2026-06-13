@@ -123,9 +123,9 @@ export default function Home() {
       if (typeof navigator.share === "function") {
         const response = await fetch(cardImageUrl);
         const blob = await response.blob();
-        const shareableFilename = `${singleCard.cardId}${singleCard.orientation === "reversed" ? "-reversed" : ""}.png`;
+        const shareableFilename = `${singleCard.cardId}${singleCard.orientation === "reversed" ? "-reversed" : ""}.webp`;
         const file = new File([blob], shareableFilename, {
-          type: blob.type || "image/png",
+          type: blob.type || "image/webp",
         });
 
         const shareData: ShareData = {

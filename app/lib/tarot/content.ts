@@ -42,7 +42,7 @@ export function getShareableImagePath(
   orientation: TarotOrientation,
 ): string {
   const suffix = orientation === "reversed" ? "-reversed" : "";
-  return getAssetPath(`shareables/${cardId}${suffix}.png`);
+  return getAssetPath(`shareables/${cardId}${suffix}.webp`);
 }
 
 export function getCardBackPath(): string {
