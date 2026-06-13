@@ -1,7 +1,6 @@
 import type { Route } from "./+types/home";
 import { useEffect, useMemo, useState } from "react";
 
-import { ReadingSummary } from "~/components/tarot/reading-summary";
 import { RevealStep } from "~/components/tarot/reveal-step";
 import { SetupForm } from "~/components/tarot/setup-form";
 import { useTarotSession } from "~/hooks/use-tarot-session";
@@ -53,17 +52,13 @@ export default function Home() {
           return previous;
         }
 
-        if (session.dailyPullRedeemed) {
-          return new Array(session.cards.length).fill(true);
-        }
-
         return new Array(session.cards.length).fill(false);
       });
       return;
     }
 
     setRevealedCards([]);
-  }, [session.cards.length, session.dailyPullRedeemed, session.phase]);
+  }, [session.cards.length, session.phase]);
 
   const allRevealed = useMemo(
     () => revealedCards.length > 0 && revealedCards.every(Boolean),
@@ -216,13 +211,6 @@ export default function Home() {
         <div className="tarot-wrap">
           <header className="tarot-header">
             <h1 className="tarot-title">BullTarot</h1>
-            <p className="tarot-subtitle">{SPREADS[spread].label}</p>
-            {session.dailyPullRedeemed ? (
-              <p className="tarot-kicker">
-                Your faith has already been rewarded today. This card is your
-                saved pull.
-              </p>
-            ) : null}
           </header>
           <RevealStep
             title="Tap each card to unveil it."
@@ -231,17 +219,6 @@ export default function Home() {
             onRevealCard={revealCard}
             onRevealAll={revealAll}
             allRevealed={allRevealed}
-            onFinish={() => {
-              trackEvent("tarot_finish_reading", {
-                spread,
-                focus,
-                deck_scope: deckScope,
-                all_cards_revealed: allRevealed,
-                revealed_cards: revealedCards.filter(Boolean).length,
-                total_cards: session.cards.length,
-              });
-              session.finishReading();
-            }}
             onRestart={() => {
               trackEvent("tarot_new_reading_from_reveal", {
                 spread,
@@ -260,7 +237,7 @@ export default function Home() {
               <a href="/daily" className="tarot-footer-link underline">
                 daily pull
               </a>{" "}
-              and return to it whenever you need guidance.
+              whenever you need quick guidance.
             </footer>
           ) : null}
         </div>
@@ -268,15 +245,5 @@ export default function Home() {
     );
   }
 
-  return (
-    <main className="tarot-shell bg-night">
-      <div className="tarot-wrap">
-        <header className="tarot-header">
-          <h1 className="tarot-title">BullTarot</h1>
-          <p className="tarot-subtitle">Your reading is complete.</p>
-        </header>
-        <ReadingSummary cards={session.cards} onRestart={session.restart} />
-      </div>
-    </main>
-  );
+  return null;
 }

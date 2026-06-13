@@ -511,13 +511,6 @@ body {
   color: rgb(245 242 234 / 88%);
 }
 
-.tarot-summary-list {
-  width: 100%;
-  max-width: 56rem;
-  display: grid;
-  gap: 0.75rem;
-}
-
 .tarot-action-row {
   display: flex;
   flex-wrap: wrap;

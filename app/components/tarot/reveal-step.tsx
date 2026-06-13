@@ -9,7 +9,6 @@ type RevealStepProps = Readonly<{
   onRevealCard: (index: number) => void;
   onRevealAll: () => void;
   allRevealed: boolean;
-  onFinish: () => void;
   onRestart: () => void;
   title?: string;
   cta?: boolean;
@@ -21,7 +20,6 @@ export function RevealStep({
   onRevealCard,
   onRevealAll,
   allRevealed,
-  onFinish,
   onRestart,
   title,
   cta = true,
@@ -112,14 +110,6 @@ export function RevealStep({
           ) : null}
           <button type="button" className="tarot-button" onClick={onRestart}>
             New Reading
-          </button>
-          <button
-            type="button"
-            className="tarot-button"
-            disabled={!allRevealed}
-            onClick={onFinish}
-          >
-            Finish Reading
           </button>
         </div>
       )}

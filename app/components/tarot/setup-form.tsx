@@ -23,7 +23,7 @@ export function SetupForm({
   const spreadOptions: Array<{ id: SpreadType; description: string }> = [
     {
       id: "single",
-      description: "One card per day. If already redeemed today, you will see the same card.",
+      description: "A quick one-card pull for focused guidance.",
     },
     {
       id: "three_card",
@@ -49,7 +49,11 @@ export function SetupForm({
     { id: "career", description: "Work, purpose, and material direction." },
   ];
 
-  const deckOptions: Array<{ id: DeckScope; title: string; description: string }> = [
+  const deckOptions: Array<{
+    id: DeckScope;
+    title: string;
+    description: string;
+  }> = [
     {
       id: "major_only",
       title: "Major Arcana only",
@@ -89,12 +93,16 @@ export function SetupForm({
                 className={`tarot-spread-card${isActive ? " is-active" : ""}`}
                 onClick={() => onSpreadChange(option.id)}
               >
-                <span className="tarot-spread-card-title">{spreadMeta.label}</span>
+                <span className="tarot-spread-card-title">
+                  {spreadMeta.label}
+                </span>
                 <span className="tarot-spread-card-count">
                   {spreadMeta.positions.length}
                   {spreadMeta.positions.length === 1 ? " card" : " cards"}
                 </span>
-                <p className="tarot-spread-card-description">{option.description}</p>
+                <p className="tarot-spread-card-description">
+                  {option.description}
+                </p>
               </button>
             );
           })}
@@ -105,7 +113,8 @@ export function SetupForm({
 
           {focusOptions.map((focusOption) => {
             const isActive = focus === focusOption.id;
-            const title = focusOption.id[0].toUpperCase() + focusOption.id.slice(1);
+            const title =
+              focusOption.id[0].toUpperCase() + focusOption.id.slice(1);
 
             return (
               <button
@@ -117,7 +126,9 @@ export function SetupForm({
                 onClick={() => onFocusChange(focusOption.id)}
               >
                 <span className="tarot-focus-card-title">{title}</span>
-                <p className="tarot-focus-card-description">{focusOption.description}</p>
+                <p className="tarot-focus-card-description">
+                  {focusOption.description}
+                </p>
               </button>
             );
           })}
@@ -138,8 +149,12 @@ export function SetupForm({
                 className={`tarot-focus-card${isActive ? " is-active" : ""}`}
                 onClick={() => onDeckScopeChange(deckOption.id)}
               >
-                <span className="tarot-focus-card-title">{deckOption.title}</span>
-                <p className="tarot-focus-card-description">{deckOption.description}</p>
+                <span className="tarot-focus-card-title">
+                  {deckOption.title}
+                </span>
+                <p className="tarot-focus-card-description">
+                  {deckOption.description}
+                </p>
               </button>
             );
           })}

@@ -1,9 +1,12 @@
 import type { SpreadType } from "./types";
 
-export const SPREADS: Record<SpreadType, { label: string; positions: string[] }> = {
+export const SPREADS: Record<
+  SpreadType,
+  { label: string; positions: string[] }
+> = {
   single: {
-    label: "1-card daily pull",
-    positions: ["Daily Insight"],
+    label: "1-card pull",
+    positions: ["Insight"],
   },
   three_card: {
     label: "3-card Past / Present / Future",
