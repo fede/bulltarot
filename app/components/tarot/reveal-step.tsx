@@ -8,6 +8,7 @@ type RevealStepProps = Readonly<{
   revealedCards: boolean[];
   onRevealCard: (index: number) => void;
   onRevealAll: () => void;
+  onShareInstagram?: () => void;
   allRevealed: boolean;
   onRestart: () => void;
   title?: string;
@@ -19,6 +20,7 @@ export function RevealStep({
   revealedCards,
   onRevealCard,
   onRevealAll,
+  onShareInstagram,
   allRevealed,
   onRestart,
   title,
@@ -106,6 +108,15 @@ export function RevealStep({
               onClick={onRevealAll}
             >
               Reveal All
+            </button>
+          ) : null}
+          {onShareInstagram ? (
+            <button
+              type="button"
+              className="tarot-button"
+              onClick={onShareInstagram}
+            >
+              Share on Instagram Story
             </button>
           ) : null}
           <button type="button" className="tarot-button" onClick={onRestart}>

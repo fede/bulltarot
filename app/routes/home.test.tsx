@@ -67,6 +67,11 @@ describe("Home route", () => {
     fireEvent.click(
       screen.getByRole("button", { name: /Reveal card for Insight/i }),
     );
+
+    expect(
+      screen.getByRole("button", { name: "Share on Instagram Story" }),
+    ).toBeInTheDocument();
+
     expect(
       screen.queryByRole("button", { name: "Reveal All" }),
     ).not.toBeInTheDocument();

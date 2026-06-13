@@ -5,7 +5,11 @@ import { RevealStep } from "~/components/tarot/reveal-step";
 import { SetupForm } from "~/components/tarot/setup-form";
 import { useTarotSession } from "~/hooks/use-tarot-session";
 import { trackEvent } from "~/lib/analytics";
-import { getCardBackPath } from "~/lib/tarot/content";
+import {
+  getCardBackPath,
+  getCardSlugVariant,
+  getImagePath,
+} from "~/lib/tarot/content";
 import { SPREADS } from "~/lib/tarot/spreads";
 import type { DeckScope, SpreadType, TarotFocus } from "~/lib/tarot/types";
 
@@ -97,6 +101,65 @@ export default function Home() {
       total_cards: session.cards.length,
     });
     setRevealedCards(new Array(session.cards.length).fill(true));
+  };
+
+  const shareSingleCardOnInstagram = async (): Promise<void> => {
+    const singleCard = session.cards[0];
+    if (!singleCard || !revealedCards[0] || typeof window === "undefined") {
+      return;
+    }
+
+    const slug = getCardSlugVariant(singleCard.name, singleCard.orientation);
+    const cardImageUrl = new URL(
+      getImagePath(singleCard.cardId),
+      window.location.origin,
+    ).toString();
+    const orientationText =
+      singleCard.orientation === "reversed" ? " (Reversed)" : "";
+    const shareText = `I pulled ${singleCard.name}${orientationText} on BullTarot. Check yours on bulltarot.com`;
+
+    let shareMethod: "native_story_share" | "fallback" = "fallback";
+    try {
+      if (typeof navigator.share === "function") {
+        const response = await fetch(cardImageUrl);
+        const blob = await response.blob();
+        const extension = blob.type === "image/png" ? "png" : "webp";
+        const file = new File([blob], `${slug}.${extension}`, {
+          type: blob.type || "image/webp",
+        });
+
+        const shareData: ShareData = {
+          files: [file],
+          text: shareText,
+        };
+
+        if (!navigator.canShare || navigator.canShare(shareData)) {
+          await navigator.share(shareData);
+          shareMethod = "native_story_share";
+        }
+      }
+    } catch {
+      shareMethod = "fallback";
+    }
+
+    if (shareMethod === "fallback") {
+      void navigator.clipboard?.writeText(`${shareText}\n${cardImageUrl}`);
+      window.open(
+        "https://www.instagram.com/",
+        "_blank",
+        "noopener,noreferrer",
+      );
+    }
+
+    trackEvent("tarot_share_instagram_story", {
+      spread,
+      focus,
+      deck_scope: deckScope,
+      card_name: singleCard.name,
+      orientation: singleCard.orientation,
+      card_slug: slug,
+      share_method: shareMethod,
+    });
   };
 
   if (!hasBegun) {
@@ -218,6 +281,11 @@ export default function Home() {
             revealedCards={revealedCards}
             onRevealCard={revealCard}
             onRevealAll={revealAll}
+            onShareInstagram={
+              spread === "single" && revealedCards[0]
+                ? shareSingleCardOnInstagram
+                : undefined
+            }
             allRevealed={allRevealed}
             onRestart={() => {
               trackEvent("tarot_new_reading_from_reveal", {
