@@ -1,4 +1,5 @@
-import type { CardInterpretations } from "./types";
+import type { CardInterpretations, TarotOrientation } from "./types";
+import { TAROT_CARDS } from "~/data/cards";
 
 export type TarotArcana = "major" | "minor";
 export type TarotSuit = "wands" | "cups" | "swords" | "pentacles";
@@ -42,6 +43,79 @@ export function getCardBackPath(): string {
 
 export function getNotFoundCardPath(): string {
   return getAssetPath("cards/404.webp");
+}
+
+function normalizeSlug(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function getCardSlug(cardName: string): string {
+  return normalizeSlug(cardName);
+}
+
+export function getCardSlugVariant(
+  cardName: string,
+  orientation: TarotOrientation,
+): string {
+  const baseSlug = getCardSlug(cardName);
+  if (orientation === "reversed") {
+    return `${baseSlug}-reversed`;
+  }
+
+  return baseSlug;
+}
+
+const CARDS_BY_SLUG = new Map<string, TarotCardContent>(
+  TAROT_CARDS.map((card) => [getCardSlug(card.name), card]),
+);
+
+export function getCardBySlug(slug: string): TarotCardContent | null {
+  const normalizedSlug = normalizeSlug(slug);
+  if (!normalizedSlug) {
+    return null;
+  }
+
+  return CARDS_BY_SLUG.get(normalizedSlug) ?? null;
+}
+
+export type ResolvedCardSlug = Readonly<{
+  card: TarotCardContent;
+  orientation: TarotOrientation;
+}>;
+
+export function resolveCardSlug(slug: string): ResolvedCardSlug | null {
+  const normalizedSlug = normalizeSlug(slug);
+  if (!normalizedSlug) {
+    return null;
+  }
+
+  if (normalizedSlug.endsWith("-reversed")) {
+    const baseSlug = normalizedSlug.slice(0, -"-reversed".length);
+    const card = getCardBySlug(baseSlug);
+
+    if (!card) {
+      return null;
+    }
+
+    return {
+      card,
+      orientation: "reversed",
+    };
+  }
+
+  const card = getCardBySlug(normalizedSlug);
+  if (!card) {
+    return null;
+  }
+
+  return {
+    card,
+    orientation: "upright",
+  };
 }
 
 export function assertCardContentComplete(

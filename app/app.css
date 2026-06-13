@@ -524,6 +524,10 @@ body {
   color: rgb(245 242 234 / 88%);
 }
 
+.tarot-card-static {
+  width: min(100%, 36rem);
+}
+
 .tarot-action-row {
   display: flex;
   flex-wrap: wrap;
