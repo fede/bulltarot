@@ -37,6 +37,14 @@ export function getImagePath(cardId: number): string {
   return getAssetPath(`cards/${cardId}.webp`);
 }
 
+export function getShareableImagePath(
+  cardId: number,
+  orientation: TarotOrientation,
+): string {
+  const suffix = orientation === "reversed" ? "-reversed" : "";
+  return getAssetPath(`shareables/${cardId}${suffix}.png`);
+}
+
 export function getCardBackPath(): string {
   return getAssetPath("cards/back.webp");
 }

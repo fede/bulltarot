@@ -6,8 +6,9 @@ import {
   getCardBySlug,
   getCardSlug,
   getCardSlugVariant,
-  resolveCardSlug,
   getImagePath,
+  getShareableImagePath,
+  resolveCardSlug,
   type TarotCardContent,
 } from "./content";
 
@@ -15,6 +16,13 @@ describe("tarot content", () => {
   it("builds image paths for card ids", () => {
     expect(getImagePath(0)).toBe("/cards/0.webp");
     expect(getImagePath(77)).toBe("/cards/77.webp");
+  });
+
+  it("builds shareable image paths for upright and reversed cards", () => {
+    expect(getShareableImagePath(12, "upright")).toBe("/shareables/12.png");
+    expect(getShareableImagePath(12, "reversed")).toBe(
+      "/shareables/12-reversed.png",
+    );
   });
 
   it("builds a stable slug for a card name", () => {
