@@ -6,6 +6,10 @@
 
 It lets you choose a spread, focus area, and deck scope, then reveal cards one by one (or all at once) and finish with a full reading summary.
 
+## But Why?
+
+This was just done for fun to test a fully AI developed web including the art and the research of each of the cards. It is meant to have a little bit of fun and not take any of this seriously.
+
 ## What this project does
 
 - Guided tarot session flow: setup -> reveal -> summary
